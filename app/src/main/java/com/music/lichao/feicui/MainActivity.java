@@ -141,8 +141,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         PendingIntent pendingIntentNotify = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);//通知点击后的跳转逻辑
         Notification notification = new Notification.Builder(this)
+                .setContentTitle("音乐控件")
+                .setContentText("下拉展开")
                 .setContentIntent(pendingIntentNotify)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.music)
                 .build();
         notification.bigContentView = remoteViews;//设置大视图布局
         notification.flags |= Notification.FLAG_NO_CLEAR;//设置通知参数
@@ -182,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         notificationManager.notify(1, builder.build());
 
         builder.setAutoCancel(false);
-
     }
 
     @Override
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         options.outWidth = 400;
         options.outHeight = 400;
         Bitmap wearBgBitmap = BitmapFactory.decodeResource(getResources(),
-                R.mipmap.ic_launcher, options);
+                R.drawable.bg, options);
         // 设置了Bg后,LargeIcon便失效
         wearableExtender.setBackground(wearBgBitmap);
 

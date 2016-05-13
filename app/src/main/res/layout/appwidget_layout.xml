@@ -4,10 +4,17 @@
     android:layout_height="match_parent"
     android:background="#33000000">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/music" />
+
     <TextView
         android:id="@+id/tv_widget_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
         android:layout_marginTop="30dip"
         android:gravity="center_horizontal"
         android:text="song name"
