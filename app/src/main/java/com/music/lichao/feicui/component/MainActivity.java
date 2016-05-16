@@ -1,4 +1,4 @@
-package com.music.lichao.feicui;
+package com.music.lichao.feicui.component;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RemoteViews;
 
+import com.music.lichao.feicui.R;
 import com.music.lichao.feicui.adapter.MusicAdapter;
 import com.music.lichao.feicui.until.MusicManager;
 
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void init() {
         //初始化数据
-        mm = MusicManager.getInstance();
+        mm = MusicManager.getInstance(this);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         play = (Button) findViewById(R.id.bt_main_play);
         pause = (Button) findViewById(R.id.bt_main_pause);

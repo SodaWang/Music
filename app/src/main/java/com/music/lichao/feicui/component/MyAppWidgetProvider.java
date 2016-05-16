@@ -1,4 +1,4 @@
-package com.music.lichao.feicui;
+package com.music.lichao.feicui.component;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.RemoteViews;
 
+import com.music.lichao.feicui.R;
 import com.music.lichao.feicui.until.MusicManager;
 
 /**
@@ -19,7 +20,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
     //更新桌面控件ui的Action
     public static final String WIDGET_UPDATE_UI = "com.music.lichao.feicui.WIDGET_UPDATE_UI";
     //音乐管理器
-    MusicManager mm = MusicManager.getInstance();
+    MusicManager mm;
 
     public MyAppWidgetProvider() {
         super();
@@ -28,7 +29,7 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
     // 接收广播的回调函数
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        mm = MusicManager.getInstance(context);
         //获得命令action
         String action = intent.getAction();
         //来自桌面组件的点击命令

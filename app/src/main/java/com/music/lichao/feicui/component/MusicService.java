@@ -1,6 +1,5 @@
-package com.music.lichao.feicui;
+package com.music.lichao.feicui.component;
 
-import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -8,15 +7,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.RemoteViews;
 
+import com.music.lichao.feicui.R;
 import com.music.lichao.feicui.until.MusicManager;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
 
 /**
  * 音乐后台服务
@@ -34,6 +30,7 @@ public class MusicService extends Service {
     public static final String ORDER_NOTIFYCATION_PAUSE = "com.muisic.lichao.feicui.ORDER_NOTIFYCATION_PAUSE";
     public static final String ORDER_NOTIFYCATION_NEXT = "com.muisic.lichao.feicui.ORDER_NOTIFYCATION_NEXT";
     public static final String ORDER_NOTIFYCATION_LAST = "com.muisic.lichao.feicui.ORDER_NOTIFYCATION_LAST";
+
     //音乐管理器
     MusicManager mm;
 
@@ -51,7 +48,7 @@ public class MusicService extends Service {
         //载入桌面组件管理器
         appWidgetManager = AppWidgetManager.getInstance(this);
         //载入音乐列表
-        mm = MusicManager.getInstance();
+        mm = MusicManager.getInstance(this);
         mm.scanMusic(getContentResolver());
         //注册命令控制接收器
         MusicReceiver receiver = new MusicReceiver();
@@ -60,6 +57,7 @@ public class MusicService extends Service {
         intentFilter.addAction(ORDER_NOTIFYCATION_PAUSE);
         intentFilter.addAction(ORDER_NOTIFYCATION_NEXT);
         intentFilter.addAction(ORDER_NOTIFYCATION_LAST);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(receiver, intentFilter);
     }
 
@@ -102,6 +100,12 @@ public class MusicService extends Service {
                 //下一曲
                 case ORDER_NOTIFYCATION_NEXT:
                     mm.next();
+                    break;
+                //屏幕熄灭
+                case Intent.ACTION_SCREEN_OFF:
+                    Intent lockIntent = new Intent(MusicService.this, LockScreenActivity.class);
+                    lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(lockIntent);
                     break;
             }
             //更新桌面组件

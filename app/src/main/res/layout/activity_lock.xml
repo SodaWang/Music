@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".component.LockScreenActivity">
+
+
+    <ImageView
+        android:id="@+id/img_album"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_centerInParent="true" />
+
+    <Button
+        android:id="@+id/lock_play"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_above="@id/img_album"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/play" />
+
+    <Button
+        android:id="@+id/lock_pause"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/img_album"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/pause" />
+
+    <Button
+        android:id="@+id/lock_left"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/img_album"
+        android:background="@drawable/left" />
+
+    <Button
+        android:id="@+id/lock_right"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/img_album"
+        android:background="@drawable/right" />
+
+</RelativeLayout>
