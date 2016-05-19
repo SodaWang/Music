@@ -19,12 +19,6 @@ import com.music.lichao.feicui.until.MusicManager;
  * Created by z on 2016/5/11.
  */
 public class MusicService extends Service {
-    //桌面组件管理器
-    AppWidgetManager appWidgetManager;
-    //桌面组件名
-    public ComponentName componentName;
-    //远程桌面控件
-    private RemoteViews remoteViews;
     //自定义控制命令的action
     public static final String ORDER_NOTIFYCATION_PLAY = "com.muisic.lichao.feicui.ORDER_NOTIFYCATION_PLAY";
     public static final String ORDER_NOTIFYCATION_PAUSE = "com.muisic.lichao.feicui.ORDER_NOTIFYCATION_PAUSE";
@@ -41,12 +35,6 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        //装载远程视图
-        remoteViews = new RemoteViews(getPackageName(), R.layout.appwidget_layout);
-        //装载组件名
-        componentName = new ComponentName(this, MyAppWidgetProvider.class);
-        //载入桌面组件管理器
-        appWidgetManager = AppWidgetManager.getInstance(this);
         //载入音乐列表
         mm = MusicManager.getInstance(this);
         mm.scanMusic(getContentResolver());

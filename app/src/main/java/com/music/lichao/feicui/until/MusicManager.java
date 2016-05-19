@@ -29,10 +29,8 @@ public class MusicManager {
     private boolean isPause = false;
     //音乐控制器
     private MediaPlayer mp;
-    //音乐路径列表
-    private List<String> list_path;
-    //音乐封面列表
-    private List<BitmapDrawable> list_img;
+    //音乐信息列表
+    private List<MusicEntity> list_music;
     //当前音乐编号
     private int currentIndex = 0;
     //通知管理器
@@ -103,18 +101,12 @@ public class MusicManager {
      *
      * @param contentResolver
      */
-    public List<String> scanMusic(ContentResolver contentResolver) {
-        //初始化音乐路径表
-        if (list_path == null) {
-            list_path = new ArrayList<String>();
+    public List<MusicEntity> scanMusic(ContentResolver contentResolver) {
+        //初始化音乐信息列表
+        if (list_music == null) {
+            list_music = new ArrayList<MusicEntity>();
         } else {
-            list_path.clear();
-        }
-        //初始化封面信息列表
-        if (list_img == null) {
-            list_img = new ArrayList<BitmapDrawable>();
-        } else {
-            list_img.clear();
+            list_music.clear();
         }
 
         //查询设备中的音乐文件信息
@@ -128,10 +120,15 @@ public class MusicManager {
         //遍历歌曲信息
         if (cursor != null && cursor.moveToFirst()) {
             do {
+                MusicEntity entity = new MusicEntity();
                 //得到歌曲文件的路径
                 String url = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
                 //保存到列表中
-                list_path.add(url);
+                entity.setPath(url);
+                //得到歌曲名字
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
+                //保存到列表中
+                entity.setTitle(name);
                 //查询歌曲id
                 int album_id = cursor.getInt(cursor
                         .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
@@ -141,15 +138,18 @@ public class MusicManager {
                 if (albumArt == null) {
                     bm = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.music);//默认封面图片
                     BitmapDrawable bmDrawable = new BitmapDrawable(mContext.getResources(), bm);
-                    list_img.add(bmDrawable);
+                    //保存专辑封面
+                    entity.setAlbum_img(bmDrawable);
                 } else {
                     bm = BitmapFactory.decodeFile(albumArt);
                     BitmapDrawable bmDrawable = new BitmapDrawable(mContext.getResources(), bm);//查询到的专辑封面
-                    list_img.add(bmDrawable);
+                    //保存专辑封面
+                    entity.setAlbum_img(bmDrawable);
                 }
+                list_music.add(entity);//将获得到的单曲信息加到列表中
             } while (cursor.moveToNext());
         }
-        return list_path;
+        return list_music;
     }
 
     /**
@@ -162,14 +162,14 @@ public class MusicManager {
             if (isPause) {
                 mp.start();
             } else {
-                if (list_path != null && !list_path.isEmpty()) {
+                if (list_music.get(id).getPath() != null && !list_music.get(id).getPath().isEmpty()) {
                     mp.reset();//把各项参数恢复到初始状态
-                    mp.setDataSource(list_path.get(id));
+                    mp.setDataSource(list_music.get(id).getPath());
                     mp.prepare();  //进行缓冲
                     mp.start();//播放
                     //更改通知栏音乐名字
                     if (mRemoteViews != null)
-                        mRemoteViews.setTextViewText(R.id.tv_notify_name, list_path.get(id));
+                        mRemoteViews.setTextViewText(R.id.tv_notify_name, list_music.get(id).getTitle());
                     if (notifycationManager != null && notifycation != null) {
                         notifycationManager.notify(0, notifycation);
                     }
@@ -217,7 +217,7 @@ public class MusicManager {
         //暂停状态下或者播放中才可下一曲
         if (isPause || mp.isPlaying()) {
             //计算正确的歌曲id
-            if (currentIndex + 1 != list_path.size()) {
+            if (currentIndex + 1 != list_music.size()) {
                 currentIndex = currentIndex + 1;
             } else {
                 currentIndex = 0;
@@ -238,7 +238,7 @@ public class MusicManager {
             if (currentIndex - 1 != -1) {
                 currentIndex = currentIndex - 1;
             } else {
-                currentIndex = list_path.size() - 1;
+                currentIndex = list_music.size() - 1;
             }
             //播放
             isPause = false;
@@ -262,8 +262,8 @@ public class MusicManager {
      * 获得当前音乐名称
      */
     public String getCurrentName() {
-        if (!list_path.isEmpty()) {
-            return list_path.get(currentIndex);
+        if (!list_music.isEmpty()) {
+            return list_music.get(currentIndex).getTitle();
         }
         return null;
     }
@@ -271,8 +271,8 @@ public class MusicManager {
     /**
      * 获得音乐列表
      */
-    public List<String> getMusicList() {
-        return list_path;
+    public List<MusicEntity> getMusicList() {
+        return list_music;
     }
 
     /**
@@ -303,7 +303,7 @@ public class MusicManager {
      * @return BitmapDrawable
      */
     public BitmapDrawable getCurrentImg() {
-        return list_img.get(currentIndex);
+        return list_music.get(currentIndex).getAlbum_img();
     }
 }
 

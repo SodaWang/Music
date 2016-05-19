@@ -19,6 +19,7 @@ import android.widget.RemoteViews;
 
 import com.music.lichao.feicui.R;
 import com.music.lichao.feicui.adapter.MusicAdapter;
+import com.music.lichao.feicui.until.MusicEntity;
 import com.music.lichao.feicui.until.MusicManager;
 
 import java.util.List;
@@ -31,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //音乐列表
     RecyclerView recyclerView;
 
-    //音乐路径列表
-    List<String> musicPathList;
+    //音乐信息表
+    List<MusicEntity> musicList;
 
     //音乐列表适配器
     MusicAdapter musicAdapter;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pause.setOnClickListener(this);
         next.setOnClickListener(this);
         last.setOnClickListener(this);
-        musicPathList = mm.scanMusic(getContentResolver());
+        musicList = mm.scanMusic(getContentResolver());
 
         //装载数据列表
         initRecyclerView();
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void initRecyclerView() {
         //初始化适配器
-        musicAdapter = new MusicAdapter(this, musicPathList);
+        musicAdapter = new MusicAdapter(this, musicList);
         //列表点击事件
         musicAdapter.setOnItemClickLitener(new MusicAdapter.OnItemClickLitener() {
             @Override
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 this);
         // 1.设置显示内容
-        builder.setContentTitle(mm.getMusicList().get(mm.getCurrentIndex()));
+        builder.setContentTitle(mm.getMusicList().get(mm.getCurrentIndex()).getTitle());
 //        builder.setContentText(musicInfo.artist);
         // 若只设置了SmallIcon,而没设置LargeIcon,则在通知栏左侧会显示SmallIcon设置的图标;若同时设置了LargeIcon,则左侧显示LargeIcon,右侧显示SmallIcon
         builder.setSmallIcon(R.mipmap.ic_launcher);

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.music.lichao.feicui.R;
+import com.music.lichao.feicui.until.MusicEntity;
 
 import java.util.List;
 
@@ -21,17 +22,17 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
 
 
     //列表数据源
-    private List<String> mMusicList;
+    private List<MusicEntity> mMusicList;
     //上下文
     private Context mContext;
     //点击事件监听器
     private OnItemClickLitener mOnItemClickLitener;
 
-    public List<String> getmMusicList() {
+    public List<MusicEntity> getmMusicList() {
         return mMusicList;
     }
 
-    public void setmMusicList(List<String> mMusicList) {
+    public void setmMusicList(List<MusicEntity> mMusicList) {
         this.mMusicList = mMusicList;
     }
 
@@ -51,7 +52,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
      * @param context   上下文
      * @param musicList 数据源
      */
-    public MusicAdapter(Context context, List<String> musicList) {
+    public MusicAdapter(Context context, List<MusicEntity> musicList) {
         mMusicList = musicList;
         mContext = context;
     }
@@ -69,7 +70,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
         //设置列表项文本
-        holder.tv_music.setText(mMusicList.get(position));
+        holder.tv_music.setText(mMusicList.get(position).getTitle());
 
         //设置点击监听
         if (mOnItemClickLitener != null) {
