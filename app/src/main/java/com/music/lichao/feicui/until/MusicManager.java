@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.music.lichao.feicui.R;
+import com.music.lichao.feicui.component.FreshUIListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,10 @@ public class MusicManager {
     //上下文
     private Context mContext;
 
+
+    //刷新监听接口
+    FreshUIListener mFreshUIListener;
+
     //构造器
     private MusicManager(Context context) {
 
@@ -60,6 +65,10 @@ public class MusicManager {
     }
 
     //读写器
+    public void setFreshUIListener(FreshUIListener freshUIListener) {
+        this.mFreshUIListener = freshUIListener;
+    }
+
     public int getCurrentIndex() {
         return currentIndex;
     }
@@ -146,6 +155,10 @@ public class MusicManager {
                     //保存专辑封面
                     entity.setAlbum_img(bmDrawable);
                 }
+                //查询歌曲歌手名字
+                String art = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
+                //保存歌曲歌手名字
+                entity.setArt(art);
                 list_music.add(entity);//将获得到的单曲信息加到列表中
             } while (cursor.moveToNext());
         }
@@ -176,10 +189,12 @@ public class MusicManager {
                 } else {
                     Log.e("lichao", "音乐列表读取失败！");
                 }
-
+                //刷新UI控件
+                freshUI(mFreshUIListener);
             }
             //取消暂停状态
             isPause = false;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -214,36 +229,30 @@ public class MusicManager {
      * 下一曲
      */
     public void next() {
-        //暂停状态下或者播放中才可下一曲
-        if (isPause || mp.isPlaying()) {
-            //计算正确的歌曲id
-            if (currentIndex + 1 != list_music.size()) {
-                currentIndex = currentIndex + 1;
-            } else {
-                currentIndex = 0;
-            }
-            //播放
-            isPause = false;
-            play(currentIndex);
+        //计算正确的歌曲id
+        if (currentIndex + 1 != list_music.size()) {
+            currentIndex = currentIndex + 1;
+        } else {
+            currentIndex = 0;
         }
+        //播放
+        isPause = false;
+        play(currentIndex);
     }
 
     /**
      * 上一曲
      */
     public void last() {
-        //暂停状态下或者播放中才可上一曲
-        if (isPause || mp.isPlaying()) {
-            //计算正确的歌曲id
-            if (currentIndex - 1 != -1) {
-                currentIndex = currentIndex - 1;
-            } else {
-                currentIndex = list_music.size() - 1;
-            }
-            //播放
-            isPause = false;
-            play(currentIndex);
+        //计算正确的歌曲id
+        if (currentIndex - 1 != -1) {
+            currentIndex = currentIndex - 1;
+        } else {
+            currentIndex = list_music.size() - 1;
         }
+        //播放
+        isPause = false;
+        play(currentIndex);
     }
 
     /**
@@ -305,6 +314,15 @@ public class MusicManager {
     public BitmapDrawable getCurrentImg() {
         return list_music.get(currentIndex).getAlbum_img();
     }
+
+    /**
+     * 刷新控件UI
+     */
+    private void freshUI(FreshUIListener freshUIListener) {
+        freshUIListener.freshUI();
+    }
+
+
 }
 
 

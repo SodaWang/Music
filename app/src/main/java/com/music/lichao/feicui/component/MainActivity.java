@@ -1,5 +1,6 @@
 package com.music.lichao.feicui.component;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,15 +8,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 
 import com.music.lichao.feicui.R;
 import com.music.lichao.feicui.adapter.MusicAdapter;
@@ -24,7 +28,7 @@ import com.music.lichao.feicui.until.MusicManager;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, FreshUIListener {
 
     //音乐管理器
     MusicManager mm;
@@ -39,12 +43,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MusicAdapter musicAdapter;
 
     //音乐控制器按钮
-    Button play, pause, next, last;
+    Button play, pause, next, last, refresh;
+
+    //封面
+    ImageView album;
+
+    //歌手、歌名
+    TextView art, name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //自定义标题
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+
 
         init();
 
@@ -57,17 +70,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void init() {
         //初始化数据
         mm = MusicManager.getInstance(this);
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         play = (Button) findViewById(R.id.bt_main_play);
         pause = (Button) findViewById(R.id.bt_main_pause);
         next = (Button) findViewById(R.id.bt_main_next);
         last = (Button) findViewById(R.id.bt_main_last);
+        refresh = (Button) findViewById(R.id.bt_refresh);
+        album = (ImageView) findViewById(R.id.iv_main_album);
+        art = (TextView) findViewById(R.id.tv_main_art);
+        name = (TextView) findViewById(R.id.tv_main_name);
+
         play.setOnClickListener(this);
         pause.setOnClickListener(this);
         next.setOnClickListener(this);
         last.setOnClickListener(this);
-        musicList = mm.scanMusic(getContentResolver());
+        refresh.setOnClickListener(this);
+        mm.setFreshUIListener(this);
 
+        musicList = mm.scanMusic(getContentResolver());
         //装载数据列表
         initRecyclerView();
 
@@ -78,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(MainActivity.this, MusicService.class);
         startService(intent);
 
+        //刷新UI
+        upDateMainUi();
     }
 
     /**
@@ -91,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onItemClick(View view, int position) {
                 //播放音乐
+                mm.setCurrentIndex(position);
                 mm.play(position);
             }
         });
@@ -98,6 +122,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(musicAdapter);
         //设置列表布局样式
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //设置歌手和歌名
+        art.setText(mm.getMusicList().get(mm.getCurrentIndex()).getArt());
+        name.setText(mm.getMusicList().get(mm.getCurrentIndex()).getTitle());
     }
 
     /**
@@ -212,9 +239,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_main_last:
                 mm.last();
                 break;
+            //刷新
+            case R.id.bt_refresh:
+                musicList = mm.scanMusic(getContentResolver());
+                musicAdapter.notifyDataSetChanged();
+                break;
         }
+
     }
 
+
+    /**
+     * 刷新主页面UI
+     */
+    private void upDateMainUi() {
+        //刷新歌曲选中状态
+        musicAdapter.setSelection(mm.getCurrentIndex());
+        musicAdapter.notifyDataSetChanged();
+        //刷新封面
+        album.setBackground(mm.getMusicList().get(mm.getCurrentIndex()).getAlbum_img());
+        //刷新歌手和歌名
+        art.setText(mm.getMusicList().get(mm.getCurrentIndex()).getArt());
+        name.setText(mm.getMusicList().get(mm.getCurrentIndex()).getTitle());
+    }
 
     //手表端通知
     private NotificationCompat.WearableExtender extendWear(NotificationCompat.Builder builder) {
@@ -263,5 +310,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         wearableExtender.setContentIconGravity(Gravity.END);
 
         return wearableExtender;
+    }
+
+    @Override
+    public void freshUI() {
+        upDateMainUi();
     }
 }

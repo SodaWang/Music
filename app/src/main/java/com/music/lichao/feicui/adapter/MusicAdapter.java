@@ -21,6 +21,8 @@ import java.util.List;
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder> {
 
 
+    //正在播放的项目
+    private int selection;
     //列表数据源
     private List<MusicEntity> mMusicList;
     //上下文
@@ -34,6 +36,15 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
 
     public void setmMusicList(List<MusicEntity> mMusicList) {
         this.mMusicList = mMusicList;
+    }
+
+    /**
+     * 选中项
+     *
+     * @param selection
+     */
+    public void setSelection(int selection) {
+        this.selection = selection;
     }
 
     //点击事件接口
@@ -69,9 +80,18 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-        //设置列表项文本
+        //设置歌名文本
         holder.tv_music.setText(mMusicList.get(position).getTitle());
-
+        //设置歌手文本
+        holder.tv_art.setText(mMusicList.get(position).getArt());
+        //选中效果
+        if (position == selection) {
+            holder.tv_music.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+            holder.tv_art.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+        } else {
+            holder.tv_music.setTextColor(mContext.getResources().getColor(R.color.colorBlack));
+            holder.tv_art.setTextColor(mContext.getResources().getColor(R.color.colorGray));
+        }
         //设置点击监听
         if (mOnItemClickLitener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -97,10 +117,15 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyViewHolder
          */
         TextView tv_music;
 
+        /**
+         * 歌手名称
+         */
+        TextView tv_art;
+
         public MyViewHolder(View itemView) {
             super(itemView);
             tv_music = (TextView) itemView.findViewById(R.id.tv_music);
-
+            tv_art = (TextView) itemView.findViewById(R.id.tv_art);
         }
     }
 }
