@@ -1,5 +1,6 @@
 package com.music.lichao.feicui.component;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +11,7 @@ import android.widget.ImageView;
 import com.music.lichao.feicui.R;
 import com.music.lichao.feicui.until.MusicManager;
 
-public class LockScreenActivity extends AppCompatActivity implements View.OnClickListener {
+public class LockScreenActivity extends Activity implements View.OnClickListener {
     //四个控制按键
     Button play, pause, next, last;
     //专辑封面
@@ -22,10 +23,8 @@ public class LockScreenActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock);
-
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD //去掉锁屏界面
                 | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED); //屏幕锁定时也能显示
-
         init();
     }
 

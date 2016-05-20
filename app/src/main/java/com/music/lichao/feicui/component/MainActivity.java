@@ -57,11 +57,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Fres
         //自定义标题
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-
-
         init();
-
-
     }
 
     /**
